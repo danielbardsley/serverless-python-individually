@@ -225,12 +225,12 @@ class PythonIndividually {
    * @param realHandler
    * @returns {Promise.<undefined>|*}
    */
-  wrap(dir, filename, libDir, realHandler) {
+    wrap(dir, filename, libDir, realHandler) {
     // realHandler: hello/hello.handler
     // handler: hello.handler
     // identifiers: ['hello', 'handler']
-    const handler = realHandler.substring(realHandler.lastIndexOf(Path.sep) + 1);
-    const identifiers = handler.split('.');
+    const handler = realHandler.substring(realHandler.lastIndexOf('.') + 1);
+    const importPath = realHandler.substring(0, realHandler.lastIndexOf('.'));
     const content = `
 # vim:fileencoding=utf-8
 # ${filename}
@@ -241,7 +241,7 @@ import sys
 root = os.path.abspath(os.path.join(os.path.dirname(__file__)))
 sys.path[0:0] = [root, os.path.join(root, \"${libDir}\")]
 
-from ${identifiers[0]} import ${identifiers[1]} as real_handler
+from ${importPath} import ${handler} as real_handler
 
 def handler(event, context):
   return real_handler(event, context)
